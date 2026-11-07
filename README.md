@@ -95,13 +95,13 @@ Respiratory Pressure Input
 
 ### Respiratory Pressure Assessment
 
-![Pulmoaid Assessment Interface](images/assessment-screen.jpg)
+![Pulmoaid Assessment Interface](images/assessment-screen.jpeg)
 
 The assessment interface displays live pressure measurements, pressure trends, maximum and minimum values, and data export controls.
 
 ### User Details Interface
 
-![Pulmoaid User Details Interface](images/user-details-screen.jpg)
+![Pulmoaid User Details Interface](images/user-details-screen.jpeg)
 
 The application includes a user details interface for assessment-related information.
 
