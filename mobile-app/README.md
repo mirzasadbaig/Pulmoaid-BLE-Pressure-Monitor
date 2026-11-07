@@ -15,6 +15,6 @@ An Android APK is available in the project's GitHub Releases.
 
 **Version:** 1.0.0
 
-[Download Pulmoaid Android App](../../releases/latest)
+[Download Pulmoaid Android App](https://github.com/mirzasadbaig/Pulmoaid-BLE-Pressure-Monitor/releases/tag/v1.0.0)
 
 > Pulmoaid is a respiratory pressure monitoring prototype intended for experimental and research purposes. It is not a certified medical diagnostic device.
