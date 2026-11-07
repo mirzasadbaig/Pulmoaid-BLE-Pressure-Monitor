@@ -105,6 +105,41 @@ The assessment interface displays live pressure measurements, pressure trends, m
 
 The application includes a user details interface for assessment-related information.
 
+## Operating Modes
+
+Pulmoaid provides two operating modes that use the same pressure measurement and visualization pipeline while maintaining separate session records.
+
+### 1. Assessment Mode
+Designed for recording respiratory pressure measurements during assessment sessions. The application captures pressure variations, displays live measurements, tracks maximum and minimum values, and exports session data for further analysis.
+
+### 2. Training Mode
+Provides the same pressure monitoring functionality for training sessions. Training records are maintained separately from assessment records to prevent the two types of sessions from being mixed.
+
+### Session Data Management
+
+Each exported CSV report contains:
+
+- Session mode (Assessment or Training)
+- Session start timestamp
+- User-entered details
+- Maximum and minimum relative pressure
+- Maximum and minimum absolute pressure
+- Pressure-time area under the curve
+- Session duration and sample count
+- Time-series pressure measurements
+
+### CSV Data Format
+
+| Parameter | Unit / Description |
+|---|---|
+| Time | Elapsed seconds |
+| Timestamp | Measurement timestamp |
+| Absolute Pressure | hPa |
+| Relative Pressure | cmH₂O |
+| Zero Reference | hPa |
+
+The CSV export enables users to retain session records and perform further analysis using tools such as Python, MATLAB, or spreadsheet software.
+
 ## Firmware Details
 
 - BLE device name: `Pressure-Sense`
