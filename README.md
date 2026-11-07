@@ -40,7 +40,7 @@ The demonstration can showcase:
 - Pressure-time area calculation
 - Session recording and CSV export
 
-**Demo Video:** [Watch Pulmoaid Working](PASTE_YOUR_VIDEO_LINK_HERE)
+**Demo Video:** [Watch Pulmoaid Working](https://youtu.be/nn1tuQ0zBI4)
 
 *Replace the placeholder with your GitHub-hosted or YouTube demonstration video link. Only list features actually shown in your video.*
 
