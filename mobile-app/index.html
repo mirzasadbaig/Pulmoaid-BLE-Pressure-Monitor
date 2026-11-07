@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pressure Sense</title>
+<style>
+  :root { --bg:#002b5c; --fg:#fff; --accent:#4fc3f7; --btn:#fff; --btnfg:#002b5c; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--fg); font-family:Roboto,system-ui,sans-serif; }
+  .screen { display:none; padding:calc(24px + env(safe-area-inset-top,0px)) 20px calc(40px + env(safe-area-inset-bottom,0px)); max-width:520px; margin:0 auto; }
+  .screen.active { display:block; }
+  h1 { font-size:34px; margin:8px 0 28px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:22px 16px; }
+  .full { grid-column:1 / -1; }
+  label { display:block; font-size:18px; margin-bottom:8px; }
+  input, textarea { width:100%; height:48px; border:0; border-radius:6px; padding:0 12px; font-size:17px; }
+  textarea { height:90px; padding:10px 12px; resize:none; }
+  button { width:100%; height:56px; border:0; border-radius:6px; background:var(--btn); color:var(--btnfg);
+           font-size:18px; font-weight:600; margin-top:24px; }
+  button.small { height:42px; margin-top:0; font-size:15px; }
+  button:disabled { opacity:.4; }
+  .dot { display:inline-block; width:10px; height:10px; border-radius:50%; background:#e57373; margin-right:8px; }
+  .dot.on { background:#81c784; }
+
+  /* ---------- Monitor screen (landscape) ---------- */
+  #s-mon { max-width:none; padding:calc(8px + env(safe-area-inset-top,0px))
+           calc(16px + env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px))
+           calc(16px + env(safe-area-inset-left,0px)); }
+  #s-mon.active { display:flex; flex-direction:column; height:100vh; height:100dvh; gap:8px; }
+  .top { display:flex; align-items:center; gap:16px; }
+  .top h1 { font-size:22px; margin:0; }
+  .top .who { font-size:14px; opacity:.85; }
+  .top .status { font-size:14px; opacity:.9; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .top button { width:auto; padding:0 16px; }
+  .main { flex:1; display:flex; gap:12px; min-height:0; }
+  .chartbox { flex:1; background:#fff; border-radius:8px; position:relative; min-width:0; }
+  canvas { position:absolute; inset:0; width:100%; height:100%; }
+  .xlabel { position:absolute; right:12px; bottom:2px; font-size:12px; color:#333; }
+  .side { width:190px; display:flex; flex-direction:column; gap:8px; }
+  .card { flex:1; border:1px solid #fff; border-radius:12px; padding:6px 8px; text-align:center;
+          display:flex; flex-direction:column; justify-content:center; }
+  .card .t { font-size:14px; }
+  .card .v { font-size:26px; font-weight:700; color:var(--accent); line-height:1.1; }
+  .card .u { font-size:12px; opacity:.85; }
+  .card .a { font-size:11px; opacity:.7; min-height:13px; }
+  .live { font-size:13px; opacity:.9; text-align:center; }
+  .live b { color:var(--accent); font-size:16px; }
+  .bottom { display:flex; gap:8px; }
+</style>
+</head>
+<body>
+
+<!-- Screen 1: details form -->
+<div id="s-form" class="screen active">
+  <h1>Enter your details :</h1>
+  <div class="grid">
+    <div><label for="name">Name:</label><input id="name"></div>
+    <div><label for="age">Age:</label><input id="age" inputmode="numeric"></div>
+    <div><label for="gender">Gender:</label><input id="gender"></div>
+    <div><label for="height">Height (cm):</label><input id="height" inputmode="decimal"></div>
+    <div><label for="weight">Weight (kg):</label><input id="weight" inputmode="decimal"></div>
+    <div><label for="smoking">Smoking Habit:</label><input id="smoking"></div>
+    <div><label for="mobile">Mobile No:</label><input id="mobile" inputmode="tel"></div>
+    <div><label for="email">Email Id:</label><input id="email" type="email"></div>
+    <div class="full"><label for="condition">Diagnosed Clinical Condition:</label><textarea id="condition"></textarea></div>
+  </div>
+  <button onclick="openMonitor('Assessment')">Start Assessment</button>
+  <button onclick="openMonitor('Training')">Start Training</button>
+</div>
+
+<!-- Screen 2: live pressure monitor (landscape) -->
+<div id="s-mon" class="screen">
+  <div class="top">
+    <h1 id="mode-title">Assessment</h1>
+    <span class="who" id="who"></span>
+    <div class="status"><span class="dot" id="dot"></span><span id="status">Not connected</span></div>
+    <button id="btn-conn" class="small" onclick="connect()">Connect to Pressure-Sense</button>
+  </div>
+
+  <div class="main">
+    <div class="chartbox">
+      <canvas id="chart"></canvas>
+      <span class="xlabel">Time (s)</span>
+    </div>
+    <div class="side">
+      <div class="live">Now: <b id="rel">--</b> cmH₂O</div>
+      <div class="card">
+        <div class="t">Max Pressure</div>
+        <div class="v" id="max">--</div>
+        <div class="u">cmH₂O</div>
+        <div class="a" id="maxabs"></div>
+      </div>
+      <div class="card">
+        <div class="t">Min Pressure</div>
+        <div class="v" id="min">--</div>
+        <div class="u">cmH₂O</div>
+        <div class="a" id="minabs"></div>
+      </div>
+      <div class="card">
+        <div class="t">Power (area under curve)</div>
+        <div class="v" id="auc">0.00</div>
+        <div class="u">cmH₂O·s</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <button class="small" onclick="tare()">Set zero</button>
+    <button class="small" onclick="clearData()">Clear data</button>
+    <button class="small" id="btn-csv" onclick="downloadCsv()" disabled>Download CSV</button>
+    <button class="small" onclick="back()">Back</button>
+  </div>
+</div>
+
+<script type="module" src="/main.js"></script>
+</body>
+</html>
