@@ -140,6 +140,30 @@ Each exported CSV report contains:
 
 The CSV export enables users to retain session records and perform further analysis using tools such as Python, MATLAB, or spreadsheet software.
 
+## Data Processing and Analysis
+
+Pressure acquisition and data processing are handled by separate components of the system.
+
+### ESP32 Firmware
+- Acquires pressure readings from the MPRLS sensor through I2C.
+- Transmits pressure measurements to the mobile application using BLE notifications.
+- Provides the pressure data to connected clients.
+
+### Mobile Application
+- Receives and processes incoming pressure measurements.
+- Converts pressure readings into relative pressure using the configured zero reference.
+- Displays real-time pressure variations.
+- Tracks maximum and minimum pressure.
+- Calculates the area under the pressure-time curve.
+- Records session duration and sample count.
+- Exports session data in CSV format.
+
+### Assessment and Training Data Management
+
+Both modes use the same measurement and data-processing pipeline. They are separated by session purpose, allowing assessment and training records to be maintained independently.
+
+Each session can be exported with its corresponding mode, metadata, summary statistics, and time-series measurements.
+
 ## Firmware Details
 
 - BLE device name: `Pressure-Sense`
